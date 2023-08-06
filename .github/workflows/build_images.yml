@@ -20,6 +20,8 @@ jobs:
       with:
         repository: actions/runner-images
         ref: main
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
     - name: Build Image
       run: |
         function exec() {
@@ -38,11 +40,15 @@ jobs:
           return "$stdout"
         }
         exec buildah login -u ${{ github.actor }} -p ${{ github.token }} ghcr.io
-        exec buildah from --format=docker --name onbuild-container ubuntu:latest
-        $containerpath = "$(exec_out buildah mount onbuild-container)"
-        Get-Content "$containerpath/etc/environment"
-        exec buildah config --env TEST=value onbuild-container
-        exec buildah unmount onbuild-container
-        exec buildah commit --format=docker onbuild-container onbuild-image
-        exec buildah push onbuild-image "docker://ghcr.io/${{ github.repository_owner }}/buildah-images:latest".ToLower()
+        exec buildah manifest create mymanifest
+        foreach($plat in "linux/amd64","linux/arm64","linux/armhf") {
+          exec buildah from --format=docker --name onbuild-container --platform "$plat" ubuntu:latest
+          $containerpath = "$(exec_out buildah mount onbuild-container)"
+          Get-Content "$containerpath/etc/environment"
+          exec buildah config --env TEST=value onbuild-container
+          exec buildah unmount onbuild-container
+          exec buildah commit --format=docker onbuild-container onbuild-image
+          buildah manifest add mymanifest docker://onbuild-image
+        }
+        buildah manifest push --all mymanifest "docker://ghcr.io/${{ github.repository_owner }}/buildah-images:latest".ToLower()
       shell: buildah unshare pwsh "{0}"
