@@ -52,5 +52,5 @@ jobs:
           exec buildah commit --format=docker "$containerName-container" "$containerName-image"
           exec buildah manifest add "$manifest" "$containerName-image"
         }
-        exec buildah manifest push --all "$manifest"
+        exec buildah manifest push --all "$manifest" "docker://$manifest"
       shell: buildah unshare pwsh "{0}"
