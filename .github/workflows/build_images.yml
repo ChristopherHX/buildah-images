@@ -35,7 +35,7 @@ jobs:
           $path, $myargs = $args
           $stdout = "$(& "$path" $myargs)"
           if($LASTEXITCODE -ne 0) {
-            throw "$args failed with exit code $LASTEXITCODE"
+            throw "$args failed with exit code $LASTEXITCODE, error: $stdout"
           }
           return "$stdout"
         }
