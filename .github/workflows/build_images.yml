@@ -24,14 +24,14 @@ jobs:
       run: |
         function exec() {
           $path, $myargs = $args
-          $proc=Start-Process -Wait -PassThru -FilePath "sudo" -Args $args
+          $proc=Start-Process -Wait -PassThru -FilePath $path -Args $myargs
           if($proc.ExitCode -ne 0) {
             throw "$args failed with exit code $proc.ExitCode"
           }
         }
         function exec_out() {
           $path, $myargs = $args
-          $stdout = "$(& "sudo" $args)"
+          $stdout = "$(& "$path" $myargs)"
           if($LASTEXITCODE -ne 0) {
             throw "$args failed with exit code $LASTEXITCODE"
           }
@@ -45,4 +45,4 @@ jobs:
         exec buildah unmount onbuild-container
         exec buildah commit --format=docker onbuild-container onbuild-image
         exec buildah push onbuild-image "docker://ghcr.io/${{ github.repository_owner }}/buildah-images:latest".ToLower()
-      shell: pwsh
+      shell: buildah unshare pwsh -command ". '{0}'"
