@@ -45,4 +45,4 @@ jobs:
         exec buildah unmount onbuild-container
         exec buildah commit --format=docker onbuild-container onbuild-image
         exec buildah push onbuild-image "docker://ghcr.io/${{ github.repository_owner }}/buildah-images:latest".ToLower()
-      shell: sudo pwsh -command ". '{0}'"
+      shell: buildah unshare pwsh "{0}"
