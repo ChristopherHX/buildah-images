@@ -41,7 +41,7 @@ jobs:
         exec buildah from --format=docker --name onbuild-container ubuntu:latest
         $containerpath = "$(exec_out buildah mount onbuild-container)"
         Get-Content "$containerpath/etc/environment"
-        exec buildah config --env onbuild-container
+        exec buildah config --env TEST=value onbuild-container
         exec buildah unmount onbuild-container
         exec buildah commit --format=docker onbuild-container onbuild-image
         exec buildah push onbuild-image "docker://ghcr.io/${{ github.repository_owner }}/buildah-images:latest".ToLower()
