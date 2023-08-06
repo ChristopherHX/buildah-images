@@ -42,7 +42,7 @@ jobs:
         exec buildah login -u ${{ github.actor }} -p ${{ github.token }} ghcr.io
         $manifest = "ghcr.io/${{ github.repository_owner }}/buildah-images:latest".ToLower()
         exec buildah manifest create "$manifest"
-        foreach($plat in "linux/amd64","linux/arm64/v8","linux/arm32/v7") {
+        foreach($plat in "linux/amd64","linux/arm64/v8","linux/arm/v7") {
           $containerName = New-Guid
           exec buildah from --format=docker --name "$containerName-container" --platform "$plat" ubuntu:latest
           $containerpath = exec_out buildah mount "$containerName-container"
