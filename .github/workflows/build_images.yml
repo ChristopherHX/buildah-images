@@ -13,6 +13,7 @@ jobs:
       packages: write
     steps:
     - name: Install buildah
+      if: false
       run: sudo apt update && sudo apt install buildah
     - name: Checkout runner-images
       uses: actions/checkout@v3
@@ -23,14 +24,14 @@ jobs:
       run: |
         function exec() {
           $path, $myargs = $args
-          $proc=Start-Process -Wait -PassThru -FilePath $path -Args $myargs
+          $proc=Start-Process -Wait -PassThru -FilePath "sudo" -Args $path,$myargs
           if($proc.ExitCode -ne 0) {
             throw "$args failed with exit code $proc.ExitCode"
           }
         }
         function exec_out() {
           $path, $myargs = $args
-          $stdout = "$(& "$path" $myargs)"
+          $stdout = "$(& "sudo" "$path" $myargs)"
           if($LASTEXITCODE -ne 0) {
             throw "$args failed with exit code $LASTEXITCODE"
           }
