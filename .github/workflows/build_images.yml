@@ -24,14 +24,14 @@ jobs:
       run: |
         function exec() {
           $path, $myargs = $args
-          $proc=Start-Process -Wait -PassThru -FilePath "sudo" -Args $path,$myargs
+          $proc=Start-Process -Wait -PassThru -FilePath "sudo" -Args $args
           if($proc.ExitCode -ne 0) {
             throw "$args failed with exit code $proc.ExitCode"
           }
         }
         function exec_out() {
           $path, $myargs = $args
-          $stdout = "$(& "sudo" "$path" $myargs)"
+          $stdout = "$(& "sudo" $args)"
           if($LASTEXITCODE -ne 0) {
             throw "$args failed with exit code $LASTEXITCODE"
           }
