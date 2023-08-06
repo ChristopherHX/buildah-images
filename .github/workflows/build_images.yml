@@ -44,7 +44,7 @@ jobs:
         exec buildah manifest create "$manifest"
         foreach($plat in "linux/amd64","linux/arm64/v8","linux/arm/v7") {
           $containerName = New-Guid
-          exec buildah from --format=docker --name "$containerName-container" --platform "$plat" ubuntu:2204
+          exec buildah from --format=docker --name "$containerName-container" --platform "$plat" ubuntu:22.04
           $containerpath = exec_out buildah mount "$containerName-container"
           Get-Content "$containerpath/etc/environment"
           Copy-Item "images/linux/toolsets/toolset-2204.json" "$containerpath/imagegeneration/installers/toolset.json"
